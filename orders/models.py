@@ -25,12 +25,12 @@ class OrderStatus(models.Model):
     class Meta:
         db_table = 'order_status'
 
-class OrderItems(models.Model):
+class OrderItem(models.Model):
     order             = models.ForeignKey('Order', on_delete=models.CASCADE)
     count             = models.IntegerField()
     tracking_number   = models.CharField(max_length=200)
     product           = models.ForeignKey(Product, on_delete=models.CASCADE)
-    order_item_status = models.ForeignKey('Order_item_status', on_delete=models.CASCADE)
+    order_item_status = models.ForeignKey('OrderItemStatus', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'order_items'
@@ -39,4 +39,4 @@ class OrderItemStatus(models.Model):
     name = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'orderitemstatus'
+        db_table = 'order_item_status'
