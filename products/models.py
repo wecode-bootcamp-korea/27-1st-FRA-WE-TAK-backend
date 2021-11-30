@@ -6,7 +6,7 @@ from users.models import User
 class Product(models.Model):
     name               = models.CharField(max_length=100)
     price              = models.DecimalField(max_digits=10, decimal_places=2)
-    category           = models.ForeignKey('Category', on_delete=models.CASCADE)
+    sub_category       = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
     rating             = models.IntegerField(null=True)
     image_description  = models.URLField()
     created_at         = models.DateTimeField(auto_now_add=True)
@@ -14,12 +14,19 @@ class Product(models.Model):
 
     class Meta:
         db_table = 'products'
-
-class Category(models.Model):
+        
+class MainCategory(models.Model):
     name = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'categories'
+        db_table = 'maincategories'
+
+class SubCategory(models.Model):
+    name          = models.CharField(max_length=100)
+    main_category = models.ForeignKey('MainCategory', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'subcategories'
 
 class Image(models.Model):
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
