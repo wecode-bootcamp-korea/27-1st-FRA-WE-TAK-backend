@@ -15,6 +15,8 @@ class Order(models.Model):
     order_number = models.IntegerField()
     user         = models.ForeignKey(User, on_delete=models.CASCADE)
     order_status = models.ForeignKey('Order', on_delete=models.CASCADE)
+    created_at   = models.DateTimeField(auto_now_add=True)
+    updated_at   = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'orders'
@@ -31,6 +33,7 @@ class OrderItem(models.Model):
     tracking_number   = models.CharField(max_length=200)
     product           = models.ForeignKey(Product, on_delete=models.CASCADE)
     order_item_status = models.ForeignKey('OrderItemStatus', on_delete=models.CASCADE)
+    
 
     class Meta:
         db_table = 'order_items'
