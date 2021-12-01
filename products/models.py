@@ -8,7 +8,7 @@ class Product(models.Model):
     sub_category       = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
     title              = models.CharField(max_length=200)
     rating             = models.IntegerField(null=True)
-    image_description  = models.URLField(max_length=1000)
+    description        = models.URLField(max_length=1000)
     created_at         = models.DateTimeField(auto_now_add=True)
     updated_at         = models.DateTimeField(auto_now=True)
 
@@ -30,7 +30,7 @@ class SubCategory(models.Model):
 
 class Image(models.Model):
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
-    image   = models.URLField(max_length=1000)
+    url     = models.URLField(max_length=1000)
 
     class Meta:
         db_table = 'images'
