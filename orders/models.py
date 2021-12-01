@@ -1,13 +1,13 @@
 from django.db       import models
+from products.models import User
 from products.models import Product
-from users.models    import User
 
 
 class Cart(models.Model):
     user    = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     count   = models.IntegerField(default=1)
-
+    
     class Meta:
         db_table = 'carts'
 
@@ -18,7 +18,7 @@ class Order(models.Model):
     address      = models.CharField(max_length=200)
     created_at   = models.DateTimeField(auto_now_add=True)
     updated_at   = models.DateTimeField(auto_now=True)
-
+    
     class Meta:
         db_table = 'orders'
 
@@ -36,7 +36,6 @@ class OrderItem(models.Model):
     order_item_status = models.ForeignKey('OrderItemStatus', on_delete=models.CASCADE)
     address           = models.CharField(max_length=200)
     
-
     class Meta:
         db_table = 'order_items'
 
