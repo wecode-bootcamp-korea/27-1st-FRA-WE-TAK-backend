@@ -14,7 +14,7 @@ class Cart(models.Model):
 class Order(models.Model):
     order_number = models.IntegerField()
     user         = models.ForeignKey(User, on_delete=models.CASCADE)
-    order_status = models.ForeignKey('Order', on_delete=models.CASCADE)
+    order_status = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
     address      = models.CharField(max_length=200)
     created_at   = models.DateTimeField(auto_now_add=True)
     updated_at   = models.DateTimeField(auto_now=True)
@@ -26,7 +26,7 @@ class OrderStatus(models.Model):
     name = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'order_status'
+        db_table = 'order_statuses'
 
 class OrderItem(models.Model):
     order             = models.ForeignKey('Order', on_delete=models.CASCADE)
@@ -34,6 +34,7 @@ class OrderItem(models.Model):
     tracking_number   = models.CharField(max_length=200)
     product           = models.ForeignKey(Product, on_delete=models.CASCADE)
     order_item_status = models.ForeignKey('OrderItemStatus', on_delete=models.CASCADE)
+    address           = models.CharField(max_length=200)
     
 
     class Meta:
@@ -43,4 +44,4 @@ class OrderItemStatus(models.Model):
     name = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'order_item_status'
+        db_table = 'order_item_statuses'

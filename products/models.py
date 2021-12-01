@@ -19,14 +19,14 @@ class MainCategory(models.Model):
     name = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'maincategories'
+        db_table = 'main_categories'
 
 class SubCategory(models.Model):
     name          = models.CharField(max_length=100)
     main_category = models.ForeignKey('MainCategory', on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'subcategories'
+        db_table = 'sub_categories'
 
 class Image(models.Model):
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
