@@ -6,6 +6,7 @@ class Product(models.Model):
     name               = models.CharField(max_length=100)
     price              = models.DecimalField(max_digits=10, decimal_places=2)
     sub_category       = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
+    title              = models.CharField(max_length=200)
     rating             = models.IntegerField(null=True)
     image_description  = models.URLField()
     created_at         = models.DateTimeField(auto_now_add=True)
