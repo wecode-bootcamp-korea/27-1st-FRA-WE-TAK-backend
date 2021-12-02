@@ -25,7 +25,7 @@ class MainCategory(models.Model):
 class SubCategory(models.Model):
     kr_name       = models.CharField(max_length=100)
     en_name       = models.CharField(max_length=100)
-    thumbnail     = models.URLField(max_length=1000)
+    thumbnail_url = models.URLField(max_length=1000)
     main_category = models.ForeignKey('MainCategory', on_delete=models.CASCADE)
 
     class Meta:
