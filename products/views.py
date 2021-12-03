@@ -11,9 +11,9 @@ class SubCategoryView(View):
         items   = MainCategory.objects.prefetch_related('subcategory_set')
         results = []
         for item in items:
-            subcategory       = item.subcategory_set.all()
+            subcategories       = item.subcategory_set.all()
             sub_category_list = []
-            for subcategory in subcategory:
+            for subcategory in subcategories:
                 sub_category_list.append(
                     {
                         'id'            : subcategory.id,
