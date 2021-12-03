@@ -13,6 +13,7 @@ class ListPageView(View):
                     {
                         'id'            : i.id,
                         'kr_name'       : i.kr_name,
+                        'en_name'       : i.en_name,
                         'thumbnail_url' : i.thumbnail_url,
                     }
                 )
