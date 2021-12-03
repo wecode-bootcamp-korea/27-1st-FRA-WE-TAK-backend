@@ -2,18 +2,25 @@ from django.http.response  import JsonResponse
 from django.views          import View
 from django.http.response  import JsonResponse
 
-from .models               import SubCategory, MainCategory
+from .models               import MainCategory
 
 class SubCategoryView(View):
-    def get(self, request, maincategory_id):
-        items = SubCategory.objects.filter(main_category__id = maincategory_id).all()
+    def get(self, request):
+        item = MainCategory.objects.prefetch_related('subcategory_set')
         results = []
-        for i in items:
-                results.append(
+        for items in item:
+            subcategory = items.subcategory_set.all()
+            sub_category_list = []
+            for subcategories in subcategory:
+                sub_category_list.append(
                     {
-                        'id'            : i.id,
-                        'kr_name'       : i.kr_name,
-                        'thumbnail_url' : i.thumbnail_url,
+                        'id'            : subcategories.id,
+                        'kr_name'       : subcategories.kr_name,
+                        'thumbnail_url' : subcategories.thumbnail_url,
                     }
                 )
-        return JsonResponse({"result":results}, status=200)
+            results.append({
+                'name' : items.name,
+                'sub_category_list' : sub_category_list
+            })
+        return JsonResponse({"result":results}, status=200) 
