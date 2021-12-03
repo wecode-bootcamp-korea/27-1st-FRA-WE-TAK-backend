@@ -1,10 +1,11 @@
 import re, json, bcrypt, jwt
+import os
 
 from django.http     import JsonResponse
 from django.views    import View
 
 from .models         import User
-from FRA_WE_BACK.settings import SECRET_KEY
+
 
 class SignUpView(View):
     def post(self, request):
