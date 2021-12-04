@@ -1,20 +1,29 @@
 from django.http.response  import JsonResponse
 from django.views          import View
 from django.http.response  import JsonResponse
-from .models               import Product 
+from products.models       import Product 
 
 
 class ListPageView(View):
-    def get(self, request, subcategory_id):
-        items = Product.objects.filter(sub_category__id = subcategory_id).all()
-        results = []
-        for i in items:
+    def get(self, request, sub_category_id):
+        products = Product.objects.filter(sub_category_id = sub_category_id)
+        print(sub_category_id)
+        results =[]
+        for product in products:
                 results.append(
                     {
-                        'id'            : i.id,
-                        'kr_name'       : i.kr_name,
-                        'en_name'       : i.en_name,
-                        'thumbnail_url' : i.thumbnail_url,
+                        'product_id'        : product.id,
+                        'kr_name'           : product.kr_name,
+                        'en_name'           : product.en_name,
+                        'price'             : product.price,
+                        'sub_category_id'   : product.sub_category.id,
+                        'sub_category_name' : product.sub_category.kr_name,
+                        'images' : [{
+                            "image_id"      : image.id,
+                            "product_image" : image.url,
+                            } for image in product.image_set.all()],
+                        'rating'        : product.rating
                     }
                 )
+        
         return JsonResponse({"result":results}, status=200) 

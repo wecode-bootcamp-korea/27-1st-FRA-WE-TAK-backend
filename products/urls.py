@@ -1,6 +1,6 @@
 from django.urls import path
-from .views      import ListPageView
+from products.views      import ListPageView
 
 urlpatterns = [
-    path('/list_page', ListPageView.as_view())
+    path('/main/<int:sub_category_id>',ListPageView.as_view())
 ]
