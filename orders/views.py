@@ -15,14 +15,13 @@ class CartView(View):
                     "product_kr_name" : cart.product.kr_name,
                     "product_en_name" : cart.product.en_name,
                     "product_price"   : cart.product.price,
-                    "product_image"   : [image.url for image in cart.image_set.all()]
+                    "product_image"   : [image.url for image in cart.product.image_set.all()]
                 }]
             return JsonResponse({'cart_items' : cart_items}, status=200)
 
     def post(self, request):
         try:
             data               = json.loads(request.body)
-
             Cart.objects.create(
                 product_id     = data['product_id'],
                 user_id        = request.user.id,
@@ -38,10 +37,10 @@ class CartView(View):
             data = json.loads(request.body)
             cart = Cart.objects.get(id=cart_id)
 
-            if data['cart_button'] == '+':
+            if data['cart_button'] == '증가':
                 cart.count += 1
                 cart.save()
-            elif data['cart_button'] == '-':
+            elif data['cart_button'] == '감소':
                 if cart.count == 1:
                     return JsonResponse({'message':'INVALID REQUEST'}, status=401)
                 cart.count -= 1
