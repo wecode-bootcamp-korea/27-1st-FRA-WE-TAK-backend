@@ -1,9 +1,11 @@
 import re, json, bcrypt, jwt
 
-from django.http     import JsonResponse
-from django.views    import View
+from django.http            import JsonResponse
+from django.core.exceptions import ValidationError
+from django.views           import View
 
-from .models         import User
+from .models              import User
+from users.validation     import email_check, password_check
 from FRA_WE_BACK.settings import SECRET_KEY
 
 class SignUpView(View):
@@ -16,14 +18,11 @@ class SignUpView(View):
             user_contact  = data['contact']
             user_address  = data['address']
 
+            email_check(user_email)
+            password_check(user_password)
+
             if User.objects.filter(email=user_email).exists():
                 return JsonResponse({"message":"EMAIL_ALREADY_EXIST"}, status=400)
-
-            if not re.match('^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$', user_email):
-                return JsonResponse({"message" : "EMAIL_ERROR"}, status=400)
-
-            if not re.match('^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$',user_password):
-                return JsonResponse({"message" : "PASSWORD_ERROR"}, status=400)
 
             hashed_password = bcrypt.hashpw(user_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
@@ -38,3 +37,6 @@ class SignUpView(View):
 
         except KeyError:
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
+        except ValidationError as e: 
+            return JsonResponse({"message": e.message}, status=400)
