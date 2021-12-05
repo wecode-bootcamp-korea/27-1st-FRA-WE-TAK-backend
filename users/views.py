@@ -26,5 +26,6 @@ class LoginView(View):
 
         except KeyError:
             return JsonResponse({"message" : "key_error"}, status=400)
+            
         except User.DoesNotExist:
             return JsonResponse({'message' : 'invalid_email'}, status=401)
