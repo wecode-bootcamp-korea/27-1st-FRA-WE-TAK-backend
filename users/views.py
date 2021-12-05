@@ -1,10 +1,10 @@
-import re, json, bcrypt, jwt
+import re, json, bcrypt, jwt, os
 
 from django.http     import JsonResponse
 from django.views    import View
 
-from .models         import User
-from FRA_WE_BACK.settings import SECRET_KEY
+from .models                 import User
+from FRA_WE_BACK.settings    import SECRET_KEY, ALGORITHM
 
 class LoginView(View):
     def post(self, request):
@@ -17,7 +17,7 @@ class LoginView(View):
             if bcrypt.checkpw(user_password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({"message": "invalid_password"}, status=401)
 
-            token = jwt.encode ({'id':user.id}, SECRET_KEY, algorithm='HS256')
+            token = jwt.encode ({'id':user.id}, SECRET_KEY, ALGORITHM=ALGORITHM)
 
             return JsonResponse({
                 'message' : 'success', 
