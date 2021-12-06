@@ -8,7 +8,6 @@ from .models               import MainCategory
 class CategoryView(View):
     def get(self, request):
         main_categories       = MainCategory.objects.prefetch_related('subcategory_set')
-
         results = []
 
         for main_category in main_categories:
