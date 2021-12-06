@@ -1,4 +1,4 @@
-import re, json, bcrypt, jwt
+import json, bcrypt, jwt
 
 from django.http     import JsonResponse
 from django.views    import View
@@ -21,7 +21,7 @@ class LoginView(View):
 
             return JsonResponse({
                 'message' : 'success', 
-                "token" : token
+                "token"   : token
                 }, status=200)
 
         except KeyError:
