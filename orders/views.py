@@ -7,7 +7,7 @@ from .models               import Cart
 
 class CartView(View):
     def get(self, request):
-            carts  = Cart.objects.filter(user_id = request.user_id)
+            carts  = Cart.objects.filter(user_id = request.user)
             cart_items = []
             for cart in carts:
                 cart_items = [{
@@ -24,7 +24,7 @@ class CartView(View):
             data               = json.loads(request.body)
             Cart.objects.create(
                 product_id     = data['product_id'],
-                user_id        = request.user.id,
+                user_id        = request.user,
                 count          = data['count']
             )
             return JsonResponse({'message' : 'SUCCESS'}, status=201)
