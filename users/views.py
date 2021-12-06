@@ -1,20 +1,10 @@
-<<<<<<< HEAD
-import re, json, bcrypt, jwt
-import os
-=======
-import json, bcrypt, jwt
->>>>>>> main
+import re, json, bcrypt, jwt, os
 
-from django.http     import JsonResponse
-from django.views    import View
+from django.views            import View
+from django.http.response    import JsonResponse
 
-<<<<<<< HEAD
-from .models         import User
-
-=======
 from .models                 import User
 from FRA_WE_BACK.settings    import SECRET_KEY, ALGORITHM
->>>>>>> main
 
 class LoginView(View):
     def post(self, request):
