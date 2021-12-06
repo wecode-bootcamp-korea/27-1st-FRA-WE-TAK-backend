@@ -2,20 +2,19 @@ import jwt
 
 from django.http 	        import JsonResponse    
 
-from FRA_WE_BACK.settings     import SECRET_KEY                             
+from FRA_WE_BACK.settings     import SECRET_KEY, ALGORITHM                             
 from users.models             import User
 
 
-def LogInDecorator(func):
+def log_in_decoratorr(func):
     def wrapper(self, request, *args, **kwargs):
         try:
-            access_token = request.headers.get('Authorization', None)          
-            payload      = jwt.decode(access_token, SECRET_KEY, algorithms='HS256')  
-            user   	     = User.objects.get(id=payload['id'])                 
-            request.user = user
+            access_token   = request.headers.get('Authorization', None)          
+            payload        = jwt.decode(access_token, SECRET_KEY, algorithms=ALGORITHM)  
+            request.user   = User.objects.get(id=payload['id'])                 
 
         except jwt.exceptions.DecodeError:                                        
-            return JsonResponse({'message' : 'INVALID_TOKEN', 'Token':access_token }, status=400)
+            return JsonResponse({'message' : 'INVALID_TOKEN'}, status=400)
 
         except User.DoesNotExist:                                         
             return JsonResponse({'message' : 'INVALID_USER'}, status=400)
