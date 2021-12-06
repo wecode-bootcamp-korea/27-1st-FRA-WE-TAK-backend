@@ -1,7 +1,7 @@
-from django.urls     import path
-from products.views  import ListPageView#DetailPageView
+from django.urls     import path, include
+from products.views  import ProductDetailView, SubCategoryView
 
 urlpatterns = [
-    path('/main/<int:sub_category_id>',ListPageView.as_view()),
-    #path('/main/<int:sub_category_id>/<int:prodcut_id',DetailPageView.as_view())
+    path('/<int:sub_category_id>', SubCategoryView.as_view()),
+    path('/subcategory/<int:product_id>', ProductDetailView.as_view())
 ]
