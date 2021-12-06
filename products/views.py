@@ -6,12 +6,12 @@ from django.views          import View
 from .models               import MainCategory
 
 
-class SubCategoryView(View):
+class CategoryView(View):
     def get(self, request):
-        items   = MainCategory.objects.prefetch_related('subcategory_set')
+        maincategories        = MainCategory.objects.prefetch_related('subcategory_set')
         results = []
-        for item in items:
-            subcategories       = item.subcategory_set.all()
+        for maincategory in maincategories:
+            subcategories     = maincategory.subcategory_set.all()
             sub_category_list = []
             for subcategory in subcategories:
                 sub_category_list.append(
@@ -22,7 +22,7 @@ class SubCategoryView(View):
                     }
                 )
             results.append({
-                'name' : item.name,
-                'sub_category_list' : sub_category_list
+                'name'                  : maincategory.name,
+                'sub_category_list'     : sub_category_list
             })
         return JsonResponse({"result":results}, status=200) 
