@@ -12,13 +12,13 @@ class CategoryView(View):
         results = []
 
         for main_category in main_categories:
-            subcategories     = main_category.subcategory_set.all()
+            sub_categories     = main_category.subcategory_set.all()
             results.append({
                 'name'                  : main_category.name,
                 'sub_category_list'     : [{
-                    'id' : sub_category_list.id, 
-                    'kr_name' : sub_category_list.kr_name, 
-                    'thumbnail_url' : sub_category_list.thumbnail_url
-                    } for sub_category_list in subcategories]
+                    'id'                : sub_category.id, 
+                    'kr_name'           : sub_category.kr_name, 
+                    'thumbnail_url'     : sub_category.thumbnail_url
+                    } for sub_category in sub_categories]
             })
         return JsonResponse({"result":results}, status=200) 
