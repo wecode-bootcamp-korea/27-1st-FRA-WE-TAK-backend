@@ -24,6 +24,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 ALGORITHM  = os.environ['ALGORITHM']
 
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

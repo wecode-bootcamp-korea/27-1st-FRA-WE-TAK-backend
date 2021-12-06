@@ -7,10 +7,7 @@ from products.models       import Product
 class ListPageView(View):
     def get(self, request, sub_category_id):
         products = Product.objects.filter(sub_category_id = sub_category_id)
-        results =[]
-        for product in products:
-            results.append(
-                {
+        results =[{
                         'product_id'         : product.id,
                         'kr_name'            : product.kr_name,
                         'en_name'            : product.en_name,
@@ -24,6 +21,6 @@ class ListPageView(View):
                             "product_image"  : image.url,
                             } for image in product.image_set.all()],
                         'rating'        : product.rating
-                    }
-            )
+                    }for product in products]
+            
         return JsonResponse({"result":results}, status=200)
