@@ -8,13 +8,15 @@ from .models              import Product
 class SearchView(View):
     def get(self, request):
         data    = json.loads(request.body)
-        products = Product.objects.filter(kr_name = data['search'])
+        products = Product.objects.filter(kr_name=data['search'])
+        results = []
+
         for product in products:
-            result=[{
-                    "product_id"      : product.product.id,
-                    "product_kr_name" : product.product.kr_name,
-                    "product_en_name" : product.product.en_name,
-                    "product_price"   : product.product.price,
+            results=[{
+                    "product_id"      : product.id,
+                    "product_kr_name" : product.kr_name,
+                    "product_en_name" : product.en_name,
+                    "product_price"   : product.price,
                     "product_image"   : [image.url for image in product.image_set.all()]
             }]
-        return JsonResponse({'result' : result}, status=200)
+        return JsonResponse({'result' : results}, status=200)
