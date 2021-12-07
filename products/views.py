@@ -3,6 +3,8 @@ import json
 from django.http.response  import JsonResponse
 from django.views          import View
 
+from django.db.models import Q
+
 from .models               import MainCategory, Product
 
 
@@ -28,8 +30,10 @@ class SearchView(View):
     def get(self, request):
         try:
             data     = json.loads(request.body)
-            products = Product.objects.filter(kr_name__icontains=data['search'])
-            results  = []
+            search   = data['search']
+            if search:
+                products = Product.objects.filter(Q(kr_name__icontains=search) | Q(en_name__icontains=search))
+                results  = []
 
             for product in products:
                 results.append([{
