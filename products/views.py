@@ -2,7 +2,7 @@ from django.http.response  import JsonResponse
 
 from django.views          import View
 
-from products.models       import Product
+from products.models       import Product, MainCategory
 
 class CartegoryView(View):
     def get(self, request):
@@ -41,4 +41,4 @@ class ProductListView(View):
             }for product in products]
             
         return JsonResponse({"result":results}, status=200)
->>>>>>> main
+
