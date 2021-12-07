@@ -70,21 +70,14 @@ class EmailSearchView(View):
     def post(self, request):
         try:
             data  = json.loads(request.body)
-            search_name    = data['name']
-            search_contact = data['contact']
+            users    = User.objects.filter(name=data['name'],contact=data['contact'])
 
-            if not User.objects.filter(name=search_name, contact=search_contact):
-                return JsonResponse({"message": "invalid_error"}, status=400)
+            if not users.exists():
+                return JsonResponse({"message": "user does not exists"}, status=404)
 
-            result = {
-                "emailsearch" : [user.email for user in User.objects.filter(name=search_name,contact=search_contact)]
-            }
+            results = [user.email for user in users]
 
-            return JsonResponse({"result":result}, status=200)
+            return JsonResponse({"result":results}, status=200)
 
         except KeyError:
             return JsonResponse({"message" : "key_error"}, status=400)
-
-        except User.DoesNotExist:
-            return JsonResponse({'message' : 'invalid_email'}, status=401)
-
