@@ -7,8 +7,7 @@ from django.db.models import Q
 
 from .models               import MainCategory, Product
 
-
-class CategoryView(View):
+class CartegoryView(View):
     def get(self, request):
         main_categories       = MainCategory.objects.prefetch_related('subcategory_set')
         results = []
@@ -25,27 +24,29 @@ class CategoryView(View):
             })
         return JsonResponse({"result":results}, status=200) 
 
-
-class SearchView(View):
+class ProductListView(View):
     def get(self, request):
-        try:
-            data     = json.loads(request.body)
-            search   = data['search']
-            if search:
-                products = Product.objects.filter(Q(kr_name__icontains=search) | Q(en_name__icontains=search))
-                results  = []
+        offset         = request.GET.get("offset", 1)
+        limit          = request.GET.get("limit", 100)
+        search_keyword = request.GET.get("search")
 
-            for product in products:
-                results.append([{
-                        "product_id"      : product.id,
-                        "product_kr_name" : product.kr_name,
-                        "product_en_name" : product.en_name,
-                        "product_price"   : product.price,
-                        "product_image"   : [image.url for image in product.image_set.all()]
-                }])
-            return JsonResponse({'result' : results}, status=200)
-        except KeyError:
-            JsonResponse({'message':'KEY_ERROR'}, status=400)
+        q = Q()
 
+        if search_keyword:
+            q &= Q(kr_name__icontains=search_keyword) | Q(en_name__icontains=search_keyword)
 
+        products = Product.objects.filter(q)[offset: offset+limit]
 
+        results =[{
+                'product_id'         : product.id,
+                'kr_name'            : product.kr_name,
+                'en_name'            : product.en_name,
+                'price'              : product.price,
+                'sub_category_id'    : product.sub_category.id,
+                'sub_category_name'  : product.sub_category.kr_name,
+                'main_category_name' : product.sub_category.main_category.name,
+                'main_category_id'   : product.sub_category.main_category.id,
+                'images'             : [{"id" : image.id, "url" : image.url} for image in product.image_set.all()]
+            }for product in products]
+            
+        return JsonResponse({"result":results}, status=200)
