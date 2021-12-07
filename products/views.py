@@ -25,7 +25,7 @@ class CategoryView(View):
 
 class SubCategoryView(View):
     def get(self, request):
-        products = Product.objects.all()
+        products = Product.objects.all()[:3]
         results = [{
                         'product_id'         : product.id,
                         'kr_name'            : product.kr_name,
@@ -48,13 +48,15 @@ class ProductDetailView(View):
     def get(self, request, product_id):
         products = Product.objects.filter(id = product_id)
         results =[{
-            'product_id'        : product.id,
-            'kr_name'           : product.kr_name,
-            'en_name'           : product.en_name,
-            'price'             : product.price,
-            'sub_category_id'   : product.sub_category.id,
-            'sub_category_name' : product.sub_category.kr_name,
-            'rating'            : product.rating,
-            'description_img'   : product.description
+            'product_id'           : product.id,
+            'kr_name'              : product.kr_name,
+            'en_name'              : product.en_name,
+            'price'                : product.price,
+            'sub_category_id'      : product.sub_category.id,
+            'sub_category_kr_name' : product.sub_category.kr_name,
+            'sub_category_en_name' : product.sub_category.en_name,
+            'rating'               : product.rating,
+            'description_txt'      : product.title,
+            'description_img'      : product.description
         } for product in products]
         return JsonResponse({"result":results}, status=200) 
