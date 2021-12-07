@@ -1,14 +1,11 @@
-import json
 from django.http.response  import JsonResponse
-
 from django.views          import View
 
-from products.models               import MainCategory, Product
-
+from products.models       import MainCategory, Product
 
 class CategoryView(View):
     def get(self, request):
-        main_categories       = MainCategory.objects.prefetch_related('subcategory_set')
+        main_categories = MainCategory.objects.prefetch_related('subcategory_set')
         results = []
 
         for main_category in main_categories:
@@ -23,9 +20,11 @@ class CategoryView(View):
             })
         return JsonResponse({"result":results}, status=200) 
 
-class SubCategoryView(View):
+class ProductListView(View):
     def get(self, request):
-        products = Product.objects.all()[:3]
+        offset = request.Get.get('offset', None)
+        limit = request.Get.get('limit', None)
+        products = Product.objects.all()[offset:offset+ limit]
         results = [{
                         'product_id'         : product.id,
                         'kr_name'            : product.kr_name,
@@ -35,18 +34,18 @@ class SubCategoryView(View):
                         'sub_category_name'  : product.sub_category.kr_name,
                         'main_category_name' : product.sub_category.main_category.name,
                         'main_category_id'   : product.sub_category.main_category.id,
+                        'rating'             : product.rating,
                         'images' : [{
-                            "image_id"       : image.id,
-                            "product_image"  : image.url,
-                            } for image in product.image_set.all()],
-                        'rating'        : product.rating
-                    }for product in products]
+                            "id"       : image.id,
+                            "url"  : image.url,
+                            } for image in product.image_set.all()],                  
+                        }for product in products]
 
         return JsonResponse({"result":results}, status=200)
 
-class ProductDetailView(View):
+class ProductView(View):
     def get(self, request, product_id):
-        products = Product.objects.filter(id = product_id)
+        products = Product.objects.select_related("sub_category").get(id = product_id)
         results =[{
             'product_id'           : product.id,
             'kr_name'              : product.kr_name,
