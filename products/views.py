@@ -58,4 +58,5 @@ class ProductView(View):
             'description_txt'      : product.title,
             'description_img'      : product.description
         } for product in products]
-        return JsonResponse({"result":results}, status=200) 
+        return JsonResponse({"result":results}, status=200)
+        
