@@ -1,3 +1,4 @@
+import json
 from django.http.response  import JsonResponse
 
 from django.views          import View
@@ -23,8 +24,8 @@ class CategoryView(View):
         return JsonResponse({"result":results}, status=200) 
 
 class SubCategoryView(View):
-    def get(self, request, sub_category_id):
-        products = Product.objects.filter(sub_category_id = sub_category_id)
+    def get(self, request):
+        products = Product.objects.all()
         results = [{
                         'product_id'         : product.id,
                         'kr_name'            : product.kr_name,
