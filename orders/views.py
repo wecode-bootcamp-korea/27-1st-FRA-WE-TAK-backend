@@ -1,11 +1,14 @@
 import json
 
-from django.http.response  import JsonResponse
-from django.views          import View
+from django.http.response   import JsonResponse
+from django.views           import View
 
-from .models               import Cart
+from .models                import Cart
+from FRA_WE_BACK.core.utils import log_in_decoratorr
+
 
 class CartView(View):
+    @log_in_decoratorr
     def get(self, request):
             carts  = Cart.objects.filter(user = request.user)
             cart_items = []
@@ -15,10 +18,12 @@ class CartView(View):
                     "product_kr_name" : cart.product.kr_name,
                     "product_en_name" : cart.product.en_name,
                     "product_price"   : cart.product.price,
+                    "count"           : cart.count,
                     "product_image"   : [image.url for image in cart.product.image_set.all()]
                 }]
             return JsonResponse({'cart_items' : cart_items}, status=200)
 
+    @log_in_decoratorr
     def post(self, request):
         try:
             data               = json.loads(request.body)
@@ -32,6 +37,7 @@ class CartView(View):
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
 
+    @log_in_decoratorr
     def patch(self, request, cart_id):
         try:
             data = json.loads(request.body)
@@ -51,6 +57,7 @@ class CartView(View):
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400) 
 
+    @log_in_decoratorr
     def delete(self, request, cart_id):
         try:
             data = json.loads(request.body)
