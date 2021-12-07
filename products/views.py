@@ -27,9 +27,9 @@ class CategoryView(View):
 class SearchView(View):
     def get(self, request):
         try:
-            data    = json.loads(request.body)
+            data     = json.loads(request.body)
             products = Product.objects.filter(kr_name__icontains=data['search'])
-            results = []
+            results  = []
 
             for product in products:
                 results.append([{
