@@ -1,10 +1,9 @@
-from django.http.response  import JsonResponse
+import json
 
+from django.http.response  import JsonResponse
 from django.views          import View
 
 from .models               import MainCategory, Product
-
-import json
 
 
 class CategoryView(View):
