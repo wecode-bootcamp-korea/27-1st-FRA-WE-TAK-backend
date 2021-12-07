@@ -13,6 +13,7 @@ class CartView(View):
             carts  = Cart.objects.filter(user = request.user).select_related("product").prefetch_related("product__image_set")
     
             results = [{
+                "cart_id"         : cart.id,
                 "user_id"         : request.user.id,
                 "email"           : request.user.email,
                 "name"            : request.user.name,
