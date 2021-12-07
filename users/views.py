@@ -8,6 +8,7 @@ from .models              import User
 from users.validation     import email_check, password_check
 from FRA_WE_BACK.settings import SECRET_KEY, ALGORITHM
 
+
 class SignUpView(View):
     def post(self, request):
         try:
@@ -64,3 +65,37 @@ class LoginView(View):
             
         except User.DoesNotExist:
             return JsonResponse({'message' : 'invalid_email'}, status=401)
+
+def search_email(request):
+    try:
+        data  = json.loads(request.body)
+
+        users = User.objects.filter(name=data["name"], contact=data["contact"])
+
+        if not users.exists():
+            return JsonResponse({"message": "user does not exist"}, status=404)
+
+        results = [user.email for user in users]
+
+        return JsonResponse({"results" : results}, status=200)
+
+    except KeyError:
+        return JsonResponse({"message" : "key_error"}, status=400)
+
+
+class EmailSearchView(View):
+    def post(self, request):
+        try:
+            data  = json.loads(request.body)
+            users = User.objects.filter(name=data["name"], contact=data["contact"])
+
+            if not users.exists():
+                return JsonResponse({"message": "user does not exist"}, status=404)
+
+            results = [user.email for user in users]
+
+            return JsonResponse({"results" : results}, status=200)
+
+        except KeyError:
+            return JsonResponse({"message" : "key_error"}, status=400)
+
