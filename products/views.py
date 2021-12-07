@@ -26,14 +26,15 @@ class CartegoryView(View):
 
 class ProductListView(View):
     def get(self, request):
-        offset         = request.GET.get("offset", 1)
+        offset         = request.GET.get("offset", 0)
         limit          = request.GET.get("limit", 100)
         search_keyword = request.GET.get("search")
+        print(search_keyword)
 
         q = Q()
 
         if search_keyword:
-            q &= Q(kr_name__icontains=search_keyword) | Q(en_name__icontains=search_keyword)
+            q &= Q(kr_name__contains=search_keyword) | Q(en_name__contains=search_keyword)
 
         products = Product.objects.filter(q)[offset: offset+limit]
 
