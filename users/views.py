@@ -3,6 +3,7 @@ import re, json, bcrypt, jwt, os
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
 from django.views           import View
+from django.db.models       import Q
 
 from .models              import User
 from users.validation     import email_check, password_check
@@ -64,3 +65,26 @@ class LoginView(View):
             
         except User.DoesNotExist:
             return JsonResponse({'message' : 'invalid_email'}, status=401)
+
+class EmailSearchView(View):
+    def post(self, request):
+        try:
+            data  = json.loads(request.body)
+            search_name    = data['name']
+            search_contact = data['contact']
+
+            if not User.objects.filter(name=search_name, contact=search_contact):
+                return JsonResponse({"message": "invalid_error"}, status=400)
+
+            result = {
+                "emailsearch" : [user.email for user in User.objects.filter(name=search_name,contact=search_contact)]
+            }
+
+            return JsonResponse({"result":result}, status=200)
+
+        except KeyError:
+            return JsonResponse({"message" : "key_error"}, status=400)
+
+        except User.DoesNotExist:
+            return JsonResponse({'message' : 'invalid_email'}, status=401)
+
