@@ -22,9 +22,9 @@ class CategoryView(View):
 
 class ProductListView(View):
     def get(self, request):
-        offset = request.Get.get('offset', None)
-        limit = request.Get.get('limit', None)
-        products = Product.objects.all()[offset:offset+ limit]
+        offset = request.GET.get('offset', None)
+        limit = request.GET.get('limit', 10)
+        products = Product.objects.all()[offset:limit]
         results = [{
                         'product_id'         : product.id,
                         'kr_name'            : product.kr_name,
