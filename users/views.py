@@ -1,8 +1,9 @@
-import re, json, bcrypt, jwt, os
+import re, json, bcrypt, jwt
 
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
 from django.views           import View
+
 
 from .models              import User
 from users.validation     import email_check, password_check
@@ -64,3 +65,19 @@ class LoginView(View):
             
         except User.DoesNotExist:
             return JsonResponse({'message' : 'invalid_email'}, status=401)
+
+class UserResetView(View):
+    def post(self, request):
+        try:
+            data  = json.loads(request.body)
+            users    = User.objects.filter(name=data['name'],contact=data['contact'])
+
+            if not users.exists():
+                return JsonResponse({"message": "user does not exists"}, status=404)
+
+            results = [user.email for user in users]
+
+            return JsonResponse({"result":results}, status=200)
+
+        except KeyError:
+            return JsonResponse({"message" : "key_error"}, status=400)
