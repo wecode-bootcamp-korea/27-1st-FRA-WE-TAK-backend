@@ -8,7 +8,7 @@ from products.models      import Product, MainCategory
 
 class CartegoryView(View):
     def get(self, request):
-        main_categories = MainCategory.objects.prefetch_related('subcategory_set')
+        main_categories       = MainCategory.objects.prefetch_related('subcategory_set')
         results = []
 
         for main_category in main_categories:
