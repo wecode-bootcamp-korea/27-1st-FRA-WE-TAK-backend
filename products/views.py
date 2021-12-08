@@ -1,11 +1,10 @@
-import json
+from django.http.response import JsonResponse
+from django.views         import View
+from django.http.response import JsonResponse
+from django.db.models     import Q
 
-from django.http.response  import JsonResponse
-from django.views          import View
+from products.models      import Product, MainCategory
 
-from django.db.models import Q
-
-from .models               import MainCategory, Product
 
 class CartegoryView(View):
     def get(self, request):
@@ -29,15 +28,10 @@ class ProductListView(View):
         offset         = request.GET.get("offset", 0)
         limit          = request.GET.get("limit", 100)
         search_keyword = request.GET.get("search")
-        print(search_keyword)
-
         q = Q()
-
         if search_keyword:
             q &= Q(kr_name__contains=search_keyword) | Q(en_name__contains=search_keyword)
-
         products = Product.objects.filter(q)[offset: offset+limit]
-
         results =[{
                 'product_id'         : product.id,
                 'kr_name'            : product.kr_name,
@@ -49,5 +43,4 @@ class ProductListView(View):
                 'main_category_id'   : product.sub_category.main_category.id,
                 'images'             : [{"id" : image.id, "url" : image.url} for image in product.image_set.all()]
             }for product in products]
-            
         return JsonResponse({"result":results}, status=200)
