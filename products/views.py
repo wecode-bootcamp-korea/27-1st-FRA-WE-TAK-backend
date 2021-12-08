@@ -28,7 +28,6 @@ class ProductListView(View):
         offset         = request.GET.get("offset", 0)
         limit          = request.GET.get("limit", 100)
         search_keyword = request.GET.get("search")
-        print(search_keyword)
         q = Q()
         if search_keyword:
             q &= Q(kr_name__contains=search_keyword) | Q(en_name__contains=search_keyword)
