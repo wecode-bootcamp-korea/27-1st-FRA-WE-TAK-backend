@@ -8,7 +8,7 @@ from FRA_WE_BACK.core.utils import log_in_decoratorr
 
 
 class CartView(View):
-    @log_in_decoratorr
+    # @log_in_decoratorr
     def get(self, request):
             carts  = Cart.objects.filter(user=1).select_related("product").prefetch_related("product__image_set")
     
@@ -26,7 +26,7 @@ class CartView(View):
             }for cart in carts]
             return JsonResponse({'cart_items' : results}, status=200)
 
-    @log_in_decoratorr
+    # @log_in_decoratorr
     def post(self, request):
         try:
             data               = json.loads(request.body)
@@ -41,11 +41,13 @@ class CartView(View):
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
 
-    @log_in_decoratorr
+    # @log_in_decoratorr
     def patch(self, request, cart_id):
         try:
             data = json.loads(request.body)
-            cart = Cart.objects.get(id=cart_id, user_id= request.user.id)
+            print(cart_id)
+            cart = Cart.objects.get(id=cart_id)
+            # cart = Cart.objects.get(id=cart_id, user_id= request.user.id)
             cart.count = data["count"]
             cart.save()
            
@@ -54,7 +56,7 @@ class CartView(View):
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400) 
 
-    @log_in_decoratorr
+    # @log_in_decoratorr
     def delete(self, request, cart_id):
         Cart.objects.filter(id=cart_id, user_id = request.user.id).delete()
         return JsonResponse({'message':'NO CONTENT'}, status=204)
