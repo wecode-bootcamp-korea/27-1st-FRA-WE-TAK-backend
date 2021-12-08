@@ -34,7 +34,6 @@ class OrderItem(models.Model):
     tracking_number   = models.CharField(max_length=200)
     product           = models.ForeignKey(Product, on_delete=models.CASCADE)
     order_item_status = models.ForeignKey('OrderItemStatus', on_delete=models.CASCADE)
-    address           = models.CharField(max_length=200)
     
     class Meta:
         db_table = 'order_items'
