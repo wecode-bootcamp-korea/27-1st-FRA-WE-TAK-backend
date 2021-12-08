@@ -6,7 +6,7 @@ from django.db.models     import Q
 from products.models      import Product, MainCategory
 
 
-class CartegoryView(View):
+class CategoryView(View):
     def get(self, request):
         main_categories       = MainCategory.objects.prefetch_related('subcategory_set')
         results = []
@@ -25,13 +25,13 @@ class CartegoryView(View):
 
 class ProductListView(View):
     def get(self, request):
-        offset         = request.GET.get("offset", 0)
-        limit          = request.GET.get("limit", 100)
+        offset         = int(request.GET.get("offset", None))
+        limit          = int(request.GET.get("limit", None))
         search_keyword = request.GET.get("search")
         q = Q()
         if search_keyword:
             q &= Q(kr_name__contains=search_keyword) | Q(en_name__contains=search_keyword)
-        products = Product.objects.filter(q)[offset: offset+limit]
+        products = Product.objects.filter(q)[offset:limit]
         results =[{
                 'product_id'         : product.id,
                 'kr_name'            : product.kr_name,
@@ -44,3 +44,23 @@ class ProductListView(View):
                 'images'             : [{"id" : image.id, "url" : image.url} for image in product.image_set.all()]
             }for product in products]
         return JsonResponse({"result":results}, status=200)
+
+class ProductView(View):
+    def get(self, request, product_id):
+        try:
+            product = Product.objects.select_related("sub_category").get(id = product_id)
+
+            result = {
+                'product_id'        : product.id,
+                'kr_name'           : product.kr_name,
+                'en_name'           : product.en_name,
+                'price'             : product.price,
+                'sub_category_id'   : product.sub_category.id,
+                'sub_category_name' : product.sub_category.kr_name,
+                'rating'            : product.rating,
+                'description_img'   : product.description
+            }
+        except Product.DoesNotExist:
+            return JsonResponse({"message": 'Product_Not_Exists'}, status=404)
+
+        return JsonResponse({"result":result}, status=200)
