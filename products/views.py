@@ -25,13 +25,13 @@ class CategoryView(View):
 
 class ProductListView(View):
     def get(self, request):
-        offset         = request.GET.get("offset", 0)
-        limit          = request.GET.get("limit", 100)
+        offset         = int(request.GET.get("offset", None))
+        limit          = int(request.GET.get("limit", None))
         search_keyword = request.GET.get("search")
         q = Q()
         if search_keyword:
             q &= Q(kr_name__contains=search_keyword) | Q(en_name__contains=search_keyword)
-        products = Product.objects.filter(q)[offset: offset+limit]
+        products = Product.objects.filter(q)[offset:limit]
         results =[{
                 'product_id'         : product.id,
                 'kr_name'            : product.kr_name,
