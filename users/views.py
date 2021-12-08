@@ -1,9 +1,9 @@
-import re, json, bcrypt, jwt, os
+import re, json, bcrypt, jwt
 
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
 from django.views           import View
-from django.db.models       import Q
+
 
 from .models              import User
 from users.validation     import email_check, password_check
@@ -81,17 +81,3 @@ class UserResetView(View):
 
         except KeyError:
             return JsonResponse({"message" : "key_error"}, status=400)
-
-    def patch(self, request):
-        try:
-            data           = json.loads(request.body)
-            users          = User.objects.get(name=data['name'],contact=data['contact'],email=data['email'])
-            password       = data['password']
-            
-            users.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-            users.save()
-
-            return JsonResponse({'message': 'password changed'}, status=200)
-
-        except User.DoesNotExist:
-            return JsonResponse({'message': 'user does not exist'}, status=400)
