@@ -4,11 +4,11 @@ from django.http.response   import JsonResponse
 from django.views           import View
 
 from .models                import Cart, Order, OrderItem
-from FRA_WE_BACK.core.utils import log_in_decoratorr
+from FRA_WE_BACK.core.utils import log_in_decorator
 
 
 class CartView(View):
-    # @log_in_decoratorr
+    @log_in_decorator
     def get(self, request):
             carts  = Cart.objects.filter(user=1).select_related("product").prefetch_related("product__image_set")
     
@@ -26,7 +26,8 @@ class CartView(View):
             }for cart in carts]
             return JsonResponse({'cart_items' : results}, status=200)
 
-    # @log_in_decoratorr
+
+    @log_in_decorator
     def post(self, request):
         try:
             data               = json.loads(request.body)
@@ -41,7 +42,7 @@ class CartView(View):
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
 
-    # @log_in_decoratorr
+    @log_in_decorator
     def patch(self, request, cart_id):
         try:
             data = json.loads(request.body)
@@ -56,7 +57,8 @@ class CartView(View):
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400) 
 
-    # @log_in_decoratorr
+
+    @log_in_decorator
     def delete(self, request, cart_id):
         Cart.objects.filter(id=cart_id, user_id = request.user.id).delete()
         return JsonResponse({'message':'NO CONTENT'}, status=204)
