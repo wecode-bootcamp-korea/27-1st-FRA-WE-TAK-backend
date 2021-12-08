@@ -1,22 +1,22 @@
-import json
+import json, uuid
 
 from django.http.response   import JsonResponse
 from django.views           import View
 
-from .models                import Cart
+from .models                import Cart, Order, OrderItem
 from FRA_WE_BACK.core.utils import log_in_decoratorr
 
 
 class CartView(View):
     @log_in_decoratorr
     def get(self, request):
-            carts  = Cart.objects.filter(user = request.user).select_related("product").prefetch_related("product__image_set")
+            carts  = Cart.objects.filter(user=1).select_related("product").prefetch_related("product__image_set")
     
             results = [{
                 "cart_id"         : cart.id,
-                "user_id"         : request.user.id,
-                "email"           : request.user.email,
-                "name"            : request.user.name,
+                # "user_id"         : request.user.id,
+                # "email"           : request.user.email,
+                # "name"            : request.user.name,
                 "product_id"      : cart.product.id,
                 "product_kr_name" : cart.product.kr_name,
                 "product_en_name" : cart.product.en_name,
@@ -32,7 +32,7 @@ class CartView(View):
             data               = json.loads(request.body)
 
             Cart.objects.create(
-                user           = request.user,
+                # user           = request.user,
                 product_id     = data['product_id'],
                 count          = data['count']
             )
@@ -58,4 +58,32 @@ class CartView(View):
     def delete(self, request, cart_id):
         Cart.objects.filter(id=cart_id, user_id = request.user.id).delete()
         return JsonResponse({'message':'NO CONTENT'}, status=204)
+
+
+# class OrderView(View):
+#     @log_in_decoratorr
+#     def post(self, request):
+#         data       = json.loads(request.body)
+#         user       = request.user
+#         order_item = OrderItem.objects.select_related("product","order")
+
+#         Order.objects.create(
+#             {
+#                 "order_number"    : uuid.uuid4,
+#                 "order_status_id" : 1,
+#                 "user_id"         : user.id   
+#             }
+#         )
+
+#         OrderItem.objects.create(
+#             {
+#                 "order"              : a,            
+#                 "count"              : a,
+#                 "tracking_number"    : a,
+#                 "product"            : OrderItem.product,
+#                 "order_item_status"  : 1,
+#                 "address"            : data["address"]
+#             }
+#         )
+
 

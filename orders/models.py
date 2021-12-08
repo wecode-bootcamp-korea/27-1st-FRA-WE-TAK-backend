@@ -15,7 +15,6 @@ class Order(models.Model):
     order_number = models.IntegerField()
     user         = models.ForeignKey(User, on_delete=models.CASCADE)
     order_status = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
-    address      = models.CharField(max_length=200)
     created_at   = models.DateTimeField(auto_now_add=True)
     updated_at   = models.DateTimeField(auto_now=True)
     
