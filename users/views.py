@@ -69,7 +69,7 @@ class LoginView(View):
 class UserResetView(View):
     def post(self, request):
         try:
-            data  = json.loads(request.body)
+            data     = json.loads(request.body)
             users    = User.objects.filter(name=data['name'],contact=data['contact'])
 
             if not users.exists():
@@ -81,3 +81,43 @@ class UserResetView(View):
 
         except KeyError:
             return JsonResponse({"message" : "key_error"}, status=400)
+
+class PasswordresetView(View):
+    def post(self, request):
+        # 휴대폰 인증 api
+        try:
+            data       = json.loads(request.body)
+            password   = data['password']
+            email      = data['email']
+            
+            if password:
+                user           = User.objects.get(email=email)
+                password       = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                user.password  = password
+                user.save()
+            else:
+                user    = User.objects.get(name=data['name'],contact=data['contact'],email=data['email'])
+                
+                if user:
+                    return JsonResponse({'message': 'user exitst'}, status=200) #,'token' : jwt.encode({'id': users.id},SECRET_KEY, algorithm=ALGORITHM))
+            
+        except KeyError:
+            return JsonResponse({"message" : "key_error"}, status=400)
+
+        except User.DoesNotExist:
+            return JsonResponse({'message': 'user does not exist'}, status=400)
+            
+    # def patch(self, request):
+    #     # 인증 후 비밀번호 변경 api
+    #     try:
+    #         data           = json.loads(request.body)
+
+    #         user           = User.objects.get(email=email)
+    #         password       = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    #         return JsonResponse({'message': ''}, status=200) #,'token' : jwt.encode({'id': users.id},SECRET_KEY, algorithm=ALGORITHM))
+            
+    #     except KeyError:
+    #         return JsonResponse({"message" : "key_error"}, status=400)
+
+    #     except User.DoesNotExist:
+    #         return JsonResponse({'message': 'user does not exist'}, status=400)
