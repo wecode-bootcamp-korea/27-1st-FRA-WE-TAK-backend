@@ -1,7 +1,10 @@
-from django.http.response  import JsonResponse
-from django.views          import View
-from django.http.response  import JsonResponse
-from products.models       import Product, MainCategory
+from django.http.response import JsonResponse
+from django.views         import View
+from django.http.response import JsonResponse
+from django.db.models     import Q
+
+from products.models      import Product, MainCategory
+
 
 class CategoryView(View):
     def get(self, request):
@@ -22,7 +25,14 @@ class CategoryView(View):
 
 class ProductListView(View):
     def get(self, request):
-        products = Product.objects.all()
+        offset         = request.GET.get("offset", 0)
+        limit          = request.GET.get("limit", 100)
+        search_keyword = request.GET.get("search")
+        print(search_keyword)
+        q = Q()
+        if search_keyword:
+            q &= Q(kr_name__contains=search_keyword) | Q(en_name__contains=search_keyword)
+        products = Product.objects.filter(q)[offset: offset+limit]
         results =[{
                 'product_id'         : product.id,
                 'kr_name'            : product.kr_name,
@@ -32,11 +42,6 @@ class ProductListView(View):
                 'sub_category_name'  : product.sub_category.kr_name,
                 'main_category_name' : product.sub_category.main_category.name,
                 'main_category_id'   : product.sub_category.main_category.id,
-                'images' : [{
-                    "image_id"       : image.id,
-                    "product_image"  : image.url,
-                    } for image in product.image_set.all()],
-                'rating'        : product.rating
+                'images'             : [{"id" : image.id, "url" : image.url} for image in product.image_set.all()]
             }for product in products]
-            
         return JsonResponse({"result":results}, status=200)
