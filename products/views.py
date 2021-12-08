@@ -6,7 +6,7 @@ from django.db.models     import Q
 from products.models      import Product, MainCategory
 
 
-class CategoryView(View):
+class CartegoryView(View):
     def get(self, request):
         main_categories = MainCategory.objects.prefetch_related('subcategory_set')
         results = []
