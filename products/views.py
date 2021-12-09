@@ -46,7 +46,6 @@ class ProductListView(View):
         return JsonResponse({"result":results}, status=200)
 
 class ProductView(View):
-    # 8000:products/1
     def get(self, request, product_id):
         try:
             product = Product.objects.select_related("sub_category").get(id = product_id)
