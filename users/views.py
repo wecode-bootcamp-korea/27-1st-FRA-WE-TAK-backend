@@ -1,4 +1,4 @@
-import re, json, bcrypt, jwt
+import re, json, bcrypt, jwt, uuid, string, random
 
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
@@ -86,38 +86,54 @@ class PasswordresetView(View):
     def post(self, request):
         # 휴대폰 인증 api
         try:
-            data       = json.loads(request.body)
-            password   = data['password']
-            email      = data['email']
-            
-            if password:
-                user           = User.objects.get(email=email)
-                password       = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-                user.password  = password
-                user.save()
-            else:
-                user    = User.objects.get(name=data['name'],contact=data['contact'],email=data['email'])
-                
-                if user:
-                    return JsonResponse({'message': 'user exitst'}, status=200) #,'token' : jwt.encode({'id': users.id},SECRET_KEY, algorithm=ALGORITHM))
+            data        = json.loads(request.body)
+            user        = User.objects.get(name=data['name'],contact=data['contact'],email=data['email'])
+        
+            random_digit = uuid.uuid1().int>>64
+            four_digit = ''
+            for i in range(4):
+                four_digit += random.choice(str(random_digit))
+
+            four_digit.save()
+
+            return JsonResponse({'message': four_digit}, status=200) #,'token' : jwt.encode({'id': users.id},SECRET_KEY, algorithm=ALGORITHM))
+
+            """
+            1. 사용자 인증에 필요한 4자리 인증 코드생성 예)4892 (uuid 라이브러리를 사용하면 난수를 생성 가능)
+            2. user table에 인증 컬럼에 4892 저장
+            3. 생성한 4892 번호 프론트에 반환
+            """
+
+        except KeyError:
+            return JsonResponse({"message" : "key_error"}, status=400)
+
+        except User.DoesNotExist:
+            return JsonResponse({'message': 'user does not exist'}, status=400)
+                        
+    def patch(self, request):
+        users = User.objects.filgter(user=request.user)
+        try:
+            """
+            1. 이전에 반환 했던 4892 번호를 프론트에서 전달 받는다.
+            2. 전달 받은 4892로 user 조회
+            3. 4892 번호를 가진 user가 db에 존재하면 access_token 발급
+            4. 4892 번호를 가진 user가 db에 없으면 인증 code errror 반환
+            """
+
+            data           = json.loads(request.body)
+            user = request.four_digit 
+            password       = data['password']
+            email          = data['email']
+
+            if not User.objects.filter(password=password).exists():
+                return JsonResponse({'message': ''}, status=200)
+            password       = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            user.password  = password
+            user.save()
+            return JsonResponse({'message': ''}, status=200) #,'token' : jwt.encode({'id': users.id},SECRET_KEY, algorithm=ALGORITHM))
             
         except KeyError:
             return JsonResponse({"message" : "key_error"}, status=400)
 
         except User.DoesNotExist:
             return JsonResponse({'message': 'user does not exist'}, status=400)
-            
-    # def patch(self, request):
-    #     # 인증 후 비밀번호 변경 api
-    #     try:
-    #         data           = json.loads(request.body)
-
-    #         user           = User.objects.get(email=email)
-    #         password       = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    #         return JsonResponse({'message': ''}, status=200) #,'token' : jwt.encode({'id': users.id},SECRET_KEY, algorithm=ALGORITHM))
-            
-    #     except KeyError:
-    #         return JsonResponse({"message" : "key_error"}, status=400)
-
-    #     except User.DoesNotExist:
-    #         return JsonResponse({'message': 'user does not exist'}, status=400)
