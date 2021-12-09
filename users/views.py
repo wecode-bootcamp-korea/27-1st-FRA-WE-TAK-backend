@@ -1,4 +1,4 @@
-import re, json, bcrypt, jwt
+import re, json, bcrypt, jwt, uuid, random
 
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
