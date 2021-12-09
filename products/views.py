@@ -59,7 +59,9 @@ class ProductView(View):
                 'sub_category_id'   : product.sub_category.id,
                 'sub_category_name' : product.sub_category.kr_name,
                 'rating'            : product.rating,
-                'description_img'   : product.description
+                'description_img'   : product.description,
+                'images'            : [{"id" : image.id, "url" : image.url} for image in product.image_set.all()]
+
             }
         except Product.DoesNotExist:
             return JsonResponse({"message": 'Product_Not_Exists'}, status=404)
