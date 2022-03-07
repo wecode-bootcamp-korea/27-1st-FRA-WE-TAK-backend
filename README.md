@@ -10,6 +10,7 @@ World's best eco-friendly chicken egg or dinosour egg, FRA-WE-TAK
 - Back-end 3명: 박재용, 박진성, 유현이
 
 <a href='https://github.com/wecode-bootcamp-korea/27-1st-FRA-WE-TAK-backend'>백엔드 깃허브 주소</a>
+<a href='https://www.youtube.com/watch?v=Uh1NVbEVGbQ'>시현영상</a>
 
 ## 적용 기술 및 구현 기능 적용 기술
 - Back-End: Python, Django Web Framework, AWS EC2, RDS, S3, MySQL
